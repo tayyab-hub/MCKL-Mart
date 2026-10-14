@@ -1,6 +1,8 @@
 # MCKL Mart
 ### PHP & MySQL E-Commerce Web Application
 
+[![PHP and JavaScript checks](https://github.com/tayyab-hub/MCKL-Mart/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/tayyab-hub/MCKL-Mart/actions/workflows/ci.yml)
+
 **Developed by Muhammad Tayyab** · Individual Diploma in Computer Science Web Computing project
 
 A locally runnable convenience-store application that takes a customer from product discovery to a database-backed demo order. Built with PHP, PDO and MariaDB, it demonstrates authentication, session carts, server-side validation and checkout transactions that protect stock when requests compete.
@@ -182,7 +184,7 @@ node --check script.js
 
 The integration runner requires an explicitly configured local test administrator. It creates two random test databases, starts loopback PHP servers and drops only the databases it created. **It does not reset the portfolio database.** See [full test commands and evidence](docs/TESTING.md), [publication review](docs/PUBLICATION_REVIEW.md) and the [historical repair report](docs/REPAIR_REPORT.md).
 
-The [GitHub Actions workflow](.github/workflows/ci.yml) has passed local actionlint validation. GitHub-hosted execution and remote rendering are checked during publication; the publication report records the verified result.
+The [GitHub Actions workflow](.github/workflows/ci.yml) passed both hosted jobs on 14 October 2026: PHP/JavaScript syntax, 21 helper checks, 33 static checks and 116 MariaDB integration checks. The [first publication run](https://github.com/tayyab-hub/MCKL-Mart/actions/runs/38567081681) records that result; the badge above tracks the current `main` branch. All eight screenshots and both Mermaid diagrams were also verified on the public README. See the [publication report](docs/PUBLICATION_REVIEW.md) for details.
 
 ## Security features
 

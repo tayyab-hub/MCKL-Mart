@@ -7,9 +7,9 @@ Reviewed 14 October 2026 · Asia/Kuala_Lumpur
 
 The local application is working. Ten normal Apache public page/search routes returned HTTP 200; the application connection uses the dedicated `mckl_mart_app` account and reads four categories and 17 products. The original missing-password issue is resolved. Its history remains in [REPAIR_REPORT.md](REPAIR_REPORT.md).
 
-The author explicitly approved publishing reviewed commit `9a00bd8` on 14 October 2026, including the necessary provenance update and CI corrections. Publication proceeds from that commit without rewriting history. The target is `tayyab-hub/MCKL-Mart`; no public repository has been created or pushed. The connected GitHub account identifies as `tayyab-hub`; the repository metadata lookup returned 404, so existence/access must be rechecked immediately before creation. Never overwrite or force-push if a repository appears in the meantime.
+The author explicitly approved publishing reviewed commit `9a00bd8` on 14 October 2026, including the necessary provenance update and CI corrections. The public repository is now [tayyab-hub/MCKL-Mart](https://github.com/tayyab-hub/MCKL-Mart), with `main` as its default branch. Its absence was rechecked immediately before creation. The first push was commit `9604985`, which adds only the confirmed ChatGPT image provenance and approval record to the reviewed source. History was preserved; no force-push or changes to other repositories occurred.
 
-The official GitHub CLI login was started but did not finish authorization; a final check still reported no authenticated CLI host. The pending login was stopped. A fresh official sign-in is needed before repository creation. No password or access token was requested in chat.
+Official browser/device authorization completed as `tayyab-hub`; GitHub CLI stores its credential in the operating-system keyring. No password or access token was requested in chat. The repository was also opened in a signed-out browser, confirming public access.
 
 ## Privacy gate
 
@@ -18,8 +18,9 @@ The official GitHub CLI login was started but did not finish authorization; a fi
 - Only `database/schema.sql`, `seed.sql` and `setup.sql` are public SQL candidates. They contain the schema and sample catalogue; no user, order, order-detail or contact rows, and no password hashes.
 - Test credentials in source are deliberately fictional fixtures; they do not authenticate against the portfolio database.
 - Screenshots use only disposable fictional records and were visually reviewed. No password fields, private config, real customer data or browser extensions are shown. JPEGs contain no EXIF data.
-- No Git history existed when work began. A new local repository was initialized; the candidate is reviewed before the first commit.
+- No Git history existed when work began. A new local repository was initialized, and the candidate was reviewed before the first commit. The two-commit history passed a redacted Gitleaks scan before the first push.
 - The 74-file staged candidate passed Gitleaks 8.30.1 with redaction enabled: no leaks found. Its exact Git index was exported locally for the scan; the private config was absent from the index and export. All 29 relative Markdown/image links resolved, and all 17 product-image hashes matched the retained originals.
+- After publication, the GitHub tree matched all 74 reviewed files with no extra files. Private configuration, database credentials and real customer records were excluded. The existing local password was also checked for absence from the publication candidate without displaying it.
 
 ## Executed checks
 
@@ -36,8 +37,9 @@ The official GitHub CLI login was started but did not finish authorization; a fi
 | Passed | Presentation | Eight genuine screenshots after logo replacement; desktop/mobile/tablet views. Fresh mobile catalogue did not overflow. |
 | Passed | Actions validation | actionlint 1.7.12 accepted the updated workflow; no Windows-only CI paths or private credentials. |
 | Passed | Cleanup | Both schemas created by this run were removed; an exact-name read-only check returned zero remaining. |
-| Not verified | GitHub Actions execution | No hosted run before approval/publication. No passing CI badge is displayed. |
-| Not verified | GitHub README rendering | Remote image/Mermaid rendering must be verified after the approved push. |
+| Passed | GitHub Actions execution | [Run 38567081681](https://github.com/tayyab-hub/MCKL-Mart/actions/runs/38567081681) succeeded for `9604985`: both jobs passed, including 21 helper, 33 static and 116 integration checks. No CI correction was required. The README badge tracks `main`. |
+| Passed | GitHub README rendering | All eight screenshot images loaded with their expected dimensions, including the expanded checkout/mobile/tablet gallery. Both architecture and six-table ER Mermaid diagrams rendered in GitHub's viewer. |
+| Passed | Published documentation links | All seven README documentation/workflow destinations returned HTTP 200 without authentication; all 19 README section/permalink anchors resolved. |
 | Not verified | Broader deployment | HTTPS hosting, other database engines, real devices, accessibility certification, load/security assessment. |
 
 No unresolved application test failure was found in this publication-preparation run. Tool setup required explicit access to official download hosts; checksum-verified Gitleaks, actionlint and GitHub CLI archives remain ignored under `.local/`. The logo renderer emitted font-cache permission notices but produced a valid, visually inspected PNG.
@@ -56,14 +58,14 @@ Added: `.gitattributes`, `assets/project-logo.svg`, `tools/render-logo.cjs`, `do
 
 Application PHP behavior, CSS, JavaScript, SQL seed records, all 17 product image files and existing database contents were preserved during this publication-preparation stage. No other projects or repositories were modified.
 
-## Approval and remaining publication steps
+## Publication outcome
 
-1. The author reviewed and approved the project, logo and retained AI-generated images.
-2. Public publication to `https://github.com/tayyab-hub/MCKL-Mart` is explicitly authorized.
-3. Complete the official GitHub sign-in flow privately when needed; never paste credentials into chat.
-4. Recheck target existence, then create/update only this repository, push without force, set an accurate description and relevant topics, and verify the README, images, Mermaid diagrams and Actions run.
-5. Investigate any real CI failure before adding a workflow status badge. No fake deployment, release or GitHub Pages application link will be created.
+The approved source and documentation are public. The original Academic Demo logo and all 17 product images remain unchanged from `9a00bd8`; the image origin is documented as the author's ChatGPT Image Generation coursework. The README clearly states that the project is not operated, sponsored or endorsed by Methodist College Kuala Lumpur.
 
-Proposed description: “Academic PHP and MariaDB e-commerce demo with authentication, a session cart, transactional checkout, stock validation and responsive design.”
+Both jobs passed in the first hosted CI run. The publication-results update changes documentation and adds a real workflow badge; subsequent runs are available on the [Actions page](https://github.com/tayyab-hub/MCKL-Mart/actions/workflows/ci.yml).
 
-Proposed topics: `php`, `mysql`, `mariadb`, `javascript`, `ecommerce`, `web-development`, `portfolio-project`.
+Repository description: “Academic PHP and MariaDB e-commerce demo with authentication, a session cart, transactional checkout, stock validation and responsive design.”
+
+Repository topics: `php`, `mysql`, `mariadb`, `javascript`, `ecommerce`, `web-development`, `portfolio-project`.
+
+No publication blocker remains. The documented application limitations still apply: this is a locally runnable academic demo, with simulated payments and fulfillment, not a deployed production store.
