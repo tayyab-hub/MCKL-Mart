@@ -7,7 +7,7 @@ Reviewed 14 October 2026 · Asia/Kuala_Lumpur
 
 The local application is working. Ten normal Apache public page/search routes returned HTTP 200; the application connection uses the dedicated `mckl_mart_app` account and reads four categories and 17 products. The original missing-password issue is resolved. Its history remains in [REPAIR_REPORT.md](REPAIR_REPORT.md).
 
-The repository is prepared locally for review. **Public publication is pending the author's explicit final approval.** The target is `tayyab-hub/MCKL-Mart`; no public repository has been created or pushed. The connected GitHub account identifies as `tayyab-hub`; the repository metadata lookup returned 404, so existence/access must be rechecked immediately before creation. Never overwrite or force-push if a repository appears in the meantime.
+The author explicitly approved publishing reviewed commit `9a00bd8` on 14 October 2026, including the necessary provenance update and CI corrections. Publication proceeds from that commit without rewriting history. The target is `tayyab-hub/MCKL-Mart`; no public repository has been created or pushed. The connected GitHub account identifies as `tayyab-hub`; the repository metadata lookup returned 404, so existence/access must be rechecked immediately before creation. Never overwrite or force-push if a repository appears in the meantime.
 
 The official GitHub CLI login was started but did not finish authorization; a final check still reported no authenticated CLI host. The pending login was stopped. A fresh official sign-in is needed before repository creation. No password or access token was requested in chat.
 
@@ -44,7 +44,7 @@ No unresolved application test failure was found in this publication-preparation
 
 ## Artwork decision
 
-All 17 product images are retained unchanged based on the author's statement that he generated them with AI for coursework/portfolio use. They show fictional project packaging; no obvious unrelated store logos were found. The original provider/model/terms are unrecorded, so legal clearance is not claimed.
+All 17 product images are retained unchanged based on the author's statement that he generated them with AI for coursework/portfolio use. They show fictional project packaging; no obvious unrelated store logos were found. The author now confirms the source as ChatGPT Image Generation for his individual Web Computing assignment, without downloaded or copied third-party images. Exact model/version and prompts are unrecorded; legal clearance is not claimed.
 
 The new standalone logo is an original SVG code-and-cart design with an **Academic Demo** wordmark, without the official college flame emblem. Blue/gold page styling is preserved. [ASSETS.md](ASSETS.md) records provenance and the comparison with the official college website. No blanket license was added.
 
@@ -58,8 +58,8 @@ Application PHP behavior, CSS, JavaScript, SQL seed records, all 17 product imag
 
 ## Approval and remaining publication steps
 
-1. Review the README, new logo and screenshot gallery, including the stated AI-image provenance limitation.
-2. Explicitly approve public publication to `https://github.com/tayyab-hub/MCKL-Mart`.
+1. The author reviewed and approved the project, logo and retained AI-generated images.
+2. Public publication to `https://github.com/tayyab-hub/MCKL-Mart` is explicitly authorized.
 3. Complete the official GitHub sign-in flow privately when needed; never paste credentials into chat.
 4. Recheck target existence, then create/update only this repository, push without force, set an accurate description and relevant topics, and verify the README, images, Mermaid diagrams and Actions run.
 5. Investigate any real CI failure before adding a workflow status badge. No fake deployment, release or GitHub Pages application link will be created.

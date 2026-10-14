@@ -4,7 +4,7 @@ Reviewed 14 October 2026. This is a record of sources and visual review, not a l
 
 ## Product illustrations
 
-Muhammad Tayyab states that he generated all 17 images in `Products/` using AI for this individual academic project, and that they were not taken from Google or copied from another store. They are retained for coursework/portfolio presentation at his request. The original generation provider, model/version, prompts and applicable terms have not been supplied or independently verified.
+Muhammad Tayyab states that he generated all 17 images in `Products/` using **ChatGPT Image Generation** for his individual MCKL Mart Web Computing assignment, and that they were not taken from Google or copied from another store. They are retained for coursework/portfolio presentation at his request. This origin was explicitly confirmed by the author on 14 October 2026. The exact model/version, generation dates and prompts were not recorded in this repository.
 
 All 17 images were visually reviewed. They depict fictional food, drinks and household products in project-branded packaging. No obvious unrelated store logo or identifiable customer was found. Some images contain invented packaging seals, nutrition or product claims; these are fictional illustration details, not verified certifications or claims about real merchandise. The images do not establish college approval.
 
@@ -32,4 +32,4 @@ The product illustrations still contain their original fictional MCKL Mart packa
 
 ## Publication decision
 
-Public publication requires the author's final approval. No software or artwork license has been invented or applied to these assets. The supplied AI-origin statement supports provenance but does not verify the original provider's terms or guarantee absence of third-party claims. Future reuse should retain the academic disclaimer and consider those limitations.
+The author approved public publication of the reviewed project on 14 October 2026 and explicitly requested retention of these ChatGPT-generated product images and the Academic Demo logo. No software or artwork license has been invented or applied to these assets. The supplied origin statement records the author's account of creation. Visual inspection found no obvious unrelated store mark or copied official college emblem; it is not an exhaustive trademark search or a guarantee against third-party claims. Future reuse should retain the academic disclaimer and consider those limitations.
