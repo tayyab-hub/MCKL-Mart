@@ -17,7 +17,7 @@ $flash = get_flash(); // grab any one-time message saved before a redirect (e.g.
                     <a href="index.php" class="nav-logo">
                         <img src="Logo of the website.png" alt="MCKL Mart" class="nav-logo-img">
                     </a>
-                    <p>Unofficial student-built e-commerce demonstration. Orders and payments are simulated locally; no real store, delivery or payment service is provided.</p>
+                    <p>Unofficial student-built e-commerce demonstration. Orders and payments are simulated; no real store, delivery or payment service is provided.</p>
                 </div>
                 <!-- Quick links to the main pages -->
                 <div class="footer-col">

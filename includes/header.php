@@ -82,6 +82,14 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         </div>
     </nav>
 
+    <?php if (public_demo_mode()): ?>
+    <div class="demo-notice" role="note">
+        <div class="container"><strong>Academic demo — fictional details only.</strong>
+        Personal fields use generated sample data. Use a temporary password you do not use elsewhere.
+        Orders, payments and delivery are simulated. Demo records may be removed by the owner.</div>
+    </div>
+    <?php endif; ?>
+
     <!-- ============================================================= -->
     <!--  Account slide-in panel (Login / Sign Up tabs OR account menu) -->
     <!-- ============================================================= -->
@@ -96,6 +104,9 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 <div class="auth-avatar"><?= e(strtoupper(mb_substr(current_user_name(), 0, 1))) ?></div>
                 <h3>Hi, <?= e(current_user_first_name()) ?>!</h3>
                 <p>You are signed in to MCKL Mart.</p>
+                <?php if (public_demo_mode() && !empty($_SESSION['demo_account_email'])): ?>
+                    <p>Save this demo email for your next login:<br><strong style="overflow-wrap:anywhere;"><?= e($_SESSION['demo_account_email']) ?></strong></p>
+                <?php endif; ?>
                 <a href="order_history.php" class="btn btn-primary auth-btn-block">My Orders</a>
                 <form method="post" action="logout.php">
                     <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
@@ -116,6 +127,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                     <span class="auth-brand-text"><span class="auth-brand-mckl">MCKL</span><span class="auth-brand-mart">Mart</span></span>
                 </div>
                 <p>Welcome — sign in or create an account</p>
+                <?php if (public_demo_mode()): ?><p>Save your generated demo email and choose a temporary password. No email is sent.</p><?php endif; ?>
             </div>
 
             <div class="auth-tabs" role="tablist">
@@ -127,6 +139,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             <div class="auth-tab-content active" id="tab-login" role="tabpanel" aria-labelledby="login-tab">
                 <form method="post" action="login.php" class="auth-form" aria-label="Login form">
                             <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+                            <?php demo_honeypot(); ?>
                     <!-- Remember which page to return to after a successful login -->
                     <input type="hidden" name="redirect" value="<?= e($currentPage) ?>">
                     <div class="form-group">
@@ -146,19 +159,20 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             <div class="auth-tab-content" id="tab-signup" role="tabpanel" aria-labelledby="signup-tab">
                 <form method="post" action="register.php" class="auth-form" aria-label="Sign up form">
                             <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+                            <?php demo_honeypot(); ?>
                     <!-- Remember which page to return to after creating an account -->
                     <input type="hidden" name="redirect" value="<?= e($currentPage) ?>">
                     <div class="form-group">
                         <label class="form-label" for="as-name">Full Name</label>
-                        <input type="text" id="as-name" name="name" class="form-control" placeholder="e.g. Ahmad Razali" required autocomplete="name" data-validate="name">
+                        <input type="text" id="as-name" <?= public_demo_mode() ? 'readonly' : '' ?> value="<?= public_demo_mode() ? 'Demo Visitor' : '' ?>" name="name" class="form-control" placeholder="e.g. Ahmad Razali" required autocomplete="name" data-validate="name">
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="as-email">Email Address</label>
-                        <input type="email" id="as-email" name="email" class="form-control" placeholder="you@email.com" required autocomplete="email" data-validate="email">
+                        <input type="email" id="as-email" <?= public_demo_mode() ? 'readonly' : '' ?> value="<?= public_demo_mode() ? e(demo_email()) : '' ?>" name="email" class="form-control" placeholder="you@email.com" required autocomplete="email" data-validate="email">
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="as-phone">Phone <span style="color:var(--gray);font-weight:400;">(optional)</span></label>
-                        <input type="tel" id="as-phone" name="phone" class="form-control" placeholder="e.g. 012-3456789" autocomplete="tel" data-validate="phone" data-optional>
+                        <input type="tel" id="as-phone" <?= public_demo_mode() ? 'readonly' : '' ?> name="phone" class="form-control" placeholder="e.g. 012-3456789" autocomplete="tel" data-validate="phone" data-optional>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="as-password">Password</label>

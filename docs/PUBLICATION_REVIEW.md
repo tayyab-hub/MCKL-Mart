@@ -3,6 +3,8 @@
 **Muhammad Tayyab — Individual Web Computing Project**
 Reviewed 14 October 2026 · Asia/Kuala_Lumpur
 
+This records the original GitHub publication. The subsequent InfinityFree deployment and unpushed hardening candidate are documented in [LIVE_DEPLOYMENT_REVIEW.md](LIVE_DEPLOYMENT_REVIEW.md).
+
 ## Current status
 
 The local application is working. Ten normal Apache public page/search routes returned HTTP 200; the application connection uses the dedicated `mckl_mart_app` account and reads four categories and 17 products. The original missing-password issue is resolved. Its history remains in [REPAIR_REPORT.md](REPAIR_REPORT.md).

@@ -15,10 +15,13 @@ if (is_logged_in()) {
 
 $errors = [];                                      // collects validation error messages
 $old    = ['name' => '', 'email' => '', 'phone' => ''];  // keeps the typed values so the form can refill them
+if (public_demo_mode()) $old = ['name'=>'Demo Visitor', 'email'=>demo_email(), 'phone'=>''];
 
 // Only run the registration logic when the form was submitted (POST request).
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require_valid_csrf();
+    $demoLease = demo_guard($pdo, 'register');
+    demo_prepare_post('register');
     // Read each field from the form; trim removes extra spaces. ?? '' avoids errors if a field is missing.
     $name     = sanitizeInput($_POST['name'] ?? '');
     $email    = sanitizeInput($_POST['email'] ?? '');
@@ -108,6 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             session_regenerate_id(true);
             $_SESSION['user_id'] = $newUserId;
             $_SESSION['user_name'] = $name;
+            $_SESSION['demo_account_email'] = is_demo_email($email) ? $email : '';
 
             if (!empty($_SESSION['last_guest_order_id'])) {
 
@@ -155,7 +159,7 @@ require_once __DIR__ . '/includes/header.php';     // load the shared page top (
                 <div class="checkout-form-card">
                     <div class="card-header">
                         <h2>Create Your Account</h2>
-                        <p>It only takes a minute</p>
+                        <p><?= public_demo_mode() ? 'Save your generated demo email and choose a temporary password. No email is sent.' : 'It only takes a minute' ?></p>
                     </div>
                     <div class="card-body">
                         <?php if (isset($errors['general'])): ?>
@@ -164,11 +168,12 @@ require_once __DIR__ . '/includes/header.php';     // load the shared page top (
                         <!-- Registration form: sends all the fields to this same page using POST -->
                         <form method="post" action="register.php" aria-label="Registration form">
                             <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+                            <?php demo_honeypot(); ?>
                             <!-- Hidden field: remembers which page to return to after registering -->
                             <input type="hidden" name="redirect" value="<?= e($_POST['redirect'] ?? ($_GET['redirect'] ?? '')) ?>">
                             <div class="form-group">
                                 <label class="form-label" for="name">Full Name <span class="req">*</span></label>
-                                <input type="text" id="name" name="name" class="form-control <?= isset($errors['name']) ? 'invalid' : '' ?>"
+                                <input type="text" id="name" <?= public_demo_mode() ? 'readonly' : '' ?> name="name" class="form-control <?= isset($errors['name']) ? 'invalid' : '' ?>"
                                     value="<?= e($old['name']) ?>" placeholder="e.g. Ahmad Razali" autocomplete="name" data-validate="name">
                                 <?php if (isset($errors['name'])): ?>
                                     <div class="form-feedback error">⚠ <?= e($errors['name']) ?></div>
@@ -176,7 +181,7 @@ require_once __DIR__ . '/includes/header.php';     // load the shared page top (
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="email">Email Address <span class="req">*</span></label>
-                                <input type="email" id="email" name="email" class="form-control <?= isset($errors['email']) ? 'invalid' : '' ?>"
+                                <input type="email" id="email" <?= public_demo_mode() ? 'readonly' : '' ?> name="email" class="form-control <?= isset($errors['email']) ? 'invalid' : '' ?>"
                                     value="<?= e($old['email']) ?>" placeholder="you@email.com" autocomplete="email" data-validate="email">
                                 <?php if (isset($errors['email'])): ?>
                                     <div class="form-feedback error">⚠ <?= e($errors['email']) ?></div>
@@ -184,7 +189,7 @@ require_once __DIR__ . '/includes/header.php';     // load the shared page top (
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="phone">Phone Number <span style="color:var(--gray);font-weight:400;">(optional)</span></label>
-                                <input type="tel" id="phone" name="phone" class="form-control <?= isset($errors['phone']) ? 'invalid' : '' ?>"
+                                <input type="tel" id="phone" <?= public_demo_mode() ? 'readonly' : '' ?> name="phone" class="form-control <?= isset($errors['phone']) ? 'invalid' : '' ?>"
                                     value="<?= e($old['phone']) ?>" placeholder="e.g. 012-3456789" autocomplete="tel" data-validate="phone" data-optional>
                                 <?php if (isset($errors['phone'])): ?>
                                     <div class="form-feedback error">⚠ <?= e($errors['phone']) ?></div>

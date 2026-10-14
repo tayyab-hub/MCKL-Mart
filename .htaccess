@@ -6,3 +6,11 @@ Options -Indexes
 </FilesMatch>
 RewriteEngine On
 RewriteRule ^(?:includes|database|tests|tools|docs|\.[^/]+)(?:/|$) - [F,L,NC]
+
+# Public demo only. Preserve localhost HTTP and all existing deny rules above.
+# InfinityFree may terminate HTTPS at its proxy; avoid redirect loops there.
+# Use a temporary redirect until verified on the host, with a fixed destination.
+RewriteCond %{HTTP_HOST} ^mcklmart\.site\.je(?::(?:80|443))?$ [NC]
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP:X-Forwarded-Proto} !^https$ [NC]
+RewriteRule ^ https://mcklmart.site.je%{REQUEST_URI} [R=302,L,NE]

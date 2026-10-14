@@ -1,6 +1,7 @@
 # Local configuration and private exports
 includes/config.local.php
 includes/config.local.*
+includes/.demo-state.php
 .env
 .env.*
 !.env.example

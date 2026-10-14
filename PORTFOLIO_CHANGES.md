@@ -1,5 +1,9 @@
 # Portfolio changes — 14 October 2026
 
+## Subsequent live-demo hardening candidate
+
+Prepared on `codex/public-demo-hardening` without changing the live files, production database or GitHub. Adds persistent bounded abuse controls, generated demo identities, record caps, Secure cookies for the public host, a domain-scoped HTTPS redirect and manual WinSCP packaging. The original eight screenshots and architecture diagrams are preserved. The README now links the actual InfinityFree demo and distinguishes deployed behavior from this candidate. See [deployment evidence and outstanding verification](docs/LIVE_DEPLOYMENT_REVIEW.md).
+
 **Muhammad Tayyab — Individual Web Computing Project**
 
 The earlier repair fixed configuration handling, validation, checkout/cart edge cases, responsive behavior and security controls. Its detailed findings and historical evidence remain in [REPAIR_REPORT.md](docs/REPAIR_REPORT.md).

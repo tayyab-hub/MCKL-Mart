@@ -7,6 +7,7 @@ Run from the repository root. PHP needs `pdo_mysql`, `mbstring` and `curl`; Node
 ```powershell
 & C:\xampp\php\php.exe tests/helpers_test.php
 & C:\xampp\php\php.exe tests/static_test.php
+& C:\xampp\php\php.exe tests/demo_test.php
 node --check script.js
 node --check tests/javascript_test.cjs
 node --check tools/render-logo.cjs
@@ -39,9 +40,13 @@ Optional `MCKL_TEST_DB_HOST` / `MCKL_TEST_DB_PORT` default to `127.0.0.1:3306`. 
 
 Coverage includes authentication, carts, search, validation, CSRF, authorization, contact storage, prices, inventory, duplicate submission, concurrent registration and competing checkout for the final item. A disposable failure-injection trigger verifies rollback of orders, lines and stock.
 
+The baseline servers explicitly use `MCKL_DEMO_MODE=0` to preserve the original 116 regression checks. Two additional servers enable public demo mode on the other newly created schema with a shared, isolated rate-state file. An additional 46 checks verify the demo's identity replacement, limits, capacity, cookie policy and failures. Both schemas are removed by the runner. The separate 32-check `demo_test.php` suite exercises concurrent filesystem locking without a database.
+
 ## Browser preview and rendered scripts
 
 Add `--serve` to keep the disposable preview running for up to 30 minutes. The command prints a browser URL and test-directory path. Use fictional details only.
+
+Add `--demo-preview` alongside `--serve` to preview the hardened public forms. After the capacity tests, only that invocation's disposable demo records/state are cleared for browser QA; the existing portfolio and hosted databases are never accessed. Do not run automated capacity tests against the public website.
 
 ```powershell
 node tests/javascript_test.cjs http://127.0.0.1:PRINTED_PORT

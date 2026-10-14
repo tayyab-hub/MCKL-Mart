@@ -28,6 +28,8 @@ jobs:
           node --check tools/render-logo.cjs
       - name: Helper regression tests
         run: php tests/helpers_test.php
+      - name: Persistent demo limiter regression tests
+        run: php tests/demo_test.php
       - name: Static privacy and asset checks
         run: php tests/static_test.php
       - name: Reject obvious private database rows
