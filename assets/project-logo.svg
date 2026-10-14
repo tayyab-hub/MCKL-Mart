@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="260" viewBox="0 0 900 260" role="img" aria-labelledby="title desc">
+  <title id="title">MCKL Mart — Academic demo</title>
+  <desc id="desc">Original project identity: code brackets inside a geometric shopping cart, with an academic demo wordmark. No college emblem.</desc>
+  <g fill="none" stroke="#f5cb20" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M42 67h22l23 101h110l24-78H77"/>
+    <path d="m119 108-18 17 18 17m52-34 18 17-18 17" stroke="#fff" stroke-width="8"/>
+  </g>
+  <g fill="#f5cb20"><circle cx="105" cy="194" r="12"/><circle cx="186" cy="194" r="12"/></g>
+  <text x="257" y="147" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="83" letter-spacing="-2">MCKL <tspan fill="#f5cb20">Mart</tspan></text>
+  <text x="263" y="191" fill="#dbe8f6" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="24" letter-spacing="6">ACADEMIC DEMO</text>
+</svg>

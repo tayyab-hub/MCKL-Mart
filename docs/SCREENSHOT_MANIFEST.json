@@ -1,0 +1,62 @@
+{
+  "captured": "2026-10-14",
+  "source": "Actual in-app Chromium browser; disposable MariaDB data",
+  "screenshots": [
+    {
+      "path": "docs/screenshots/cart-desktop.jpg",
+      "width": 1425,
+      "height": 891,
+      "bytes": 79250,
+      "sha256": "28c72d3bc6be75eea8690911617e1e9fae8dfa03c2178fc6e22965d6d3027c22"
+    },
+    {
+      "path": "docs/screenshots/catalogue-desktop.jpg",
+      "width": 1425,
+      "height": 891,
+      "bytes": 150999,
+      "sha256": "dea69a087dbddf0fa199386179c450d5e4bc65c671a2a473355dd8498e1db6b0"
+    },
+    {
+      "path": "docs/screenshots/catalogue-mobile.jpg",
+      "width": 375,
+      "height": 811,
+      "bytes": 46708,
+      "sha256": "80ec3aff9421309659dff6bbbf83ac258885c971ba029b46715d1dcb0dba34fe"
+    },
+    {
+      "path": "docs/screenshots/checkout-desktop.jpg",
+      "width": 1424,
+      "height": 2148,
+      "bytes": 165502,
+      "sha256": "abebe315ac4ee5cfbaa3b608fc0445b4d16584c780cdd679e0f325958d13c264"
+    },
+    {
+      "path": "docs/screenshots/homepage-desktop.jpg",
+      "width": 1425,
+      "height": 891,
+      "bytes": 67271,
+      "sha256": "b732af6170ccaa2973c3ec7a30dbde79c10d0a27a33d6bad3747a11e13145b5c"
+    },
+    {
+      "path": "docs/screenshots/order-history-desktop.jpg",
+      "width": 1425,
+      "height": 891,
+      "bytes": 68217,
+      "sha256": "5736457fadf25c9224e9ddfff00f97e2a302ba1f9bc506d549504c41c3785fb6"
+    },
+    {
+      "path": "docs/screenshots/product-desktop.jpg",
+      "width": 1425,
+      "height": 891,
+      "bytes": 119800,
+      "sha256": "6614228acb743093b44ea04786e41b313e3198fc9da967eca0e61b227d047f32"
+    },
+    {
+      "path": "docs/screenshots/product-tablet.jpg",
+      "width": 753,
+      "height": 1004,
+      "bytes": 101634,
+      "sha256": "5993b5dc01ff42d1605b4ea285077dcbe8fa69fd17c7fe9dd8c66f82c79b4aa9"
+    }
+  ]
+}

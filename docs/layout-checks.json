@@ -1,0 +1,258 @@
+[
+  {
+    "route": "index.php",
+    "width": 1440,
+    "height": 900,
+    "greetingBottom": 118.90000534057616,
+    "headingTop": 490.5874938964844,
+    "pageWidth": 1425
+  },
+  {
+    "route": "products.php",
+    "width": 1440,
+    "height": 900,
+    "greetingBottom": 118.40000534057616,
+    "headingTop": 150.15000915527344,
+    "pageWidth": 1425
+  },
+  {
+    "route": "product_details.php?id=2",
+    "width": 1440,
+    "height": 900,
+    "greetingBottom": 118.46250534057616,
+    "headingTop": 150.15000915527344,
+    "pageWidth": 1425
+  },
+  {
+    "route": "cart.php",
+    "width": 1440,
+    "height": 900,
+    "greetingBottom": 118.53750228881836,
+    "headingTop": 150.15000915527344,
+    "pageWidth": 1425
+  },
+  {
+    "route": "checkout.php",
+    "width": 1440,
+    "height": 900,
+    "greetingBottom": 118.65000534057616,
+    "headingTop": 150.15000915527344,
+    "pageWidth": 1425
+  },
+  {
+    "route": "contact.php",
+    "width": 1440,
+    "height": 900,
+    "greetingBottom": 118.61249923706056,
+    "headingTop": 150.15000915527344,
+    "pageWidth": 1425
+  },
+  {
+    "route": "login.php",
+    "width": 1440,
+    "height": 900,
+    "greetingBottom": 118.81250381469728,
+    "headingTop": 150.15000915527344,
+    "pageWidth": 1425
+  },
+  {
+    "route": "register.php",
+    "width": 1440,
+    "height": 900,
+    "greetingBottom": 118.65000534057616,
+    "headingTop": 150.15000915527344,
+    "pageWidth": 1425
+  },
+  {
+    "route": "index.php",
+    "width": 768,
+    "height": 1024,
+    "greetingBottom": 107.72500228881836,
+    "headingTop": 470.1875,
+    "pageWidth": 753
+  },
+  {
+    "route": "products.php",
+    "width": 768,
+    "height": 1024,
+    "greetingBottom": 114.03750228881836,
+    "headingTop": 150.15000915527344,
+    "pageWidth": 753
+  },
+  {
+    "route": "product_details.php?id=2",
+    "width": 768,
+    "height": 1024,
+    "greetingBottom": 108.20000076293944,
+    "headingTop": 150.15000915527344,
+    "pageWidth": 753
+  },
+  {
+    "route": "cart.php",
+    "width": 768,
+    "height": 1024,
+    "greetingBottom": 107.72500228881836,
+    "headingTop": 150.15000915527344,
+    "pageWidth": 753
+  },
+  {
+    "route": "checkout.php",
+    "width": 768,
+    "height": 1024,
+    "greetingBottom": 107.70000076293944,
+    "headingTop": 150.15000915527344,
+    "pageWidth": 753
+  },
+  {
+    "route": "contact.php",
+    "width": 768,
+    "height": 1024,
+    "greetingBottom": 106.15000534057616,
+    "headingTop": 150.15000915527344,
+    "pageWidth": 753
+  },
+  {
+    "route": "login.php",
+    "width": 768,
+    "height": 1024,
+    "greetingBottom": 106.15000534057616,
+    "headingTop": 150.15000915527344,
+    "pageWidth": 753
+  },
+  {
+    "route": "register.php",
+    "width": 768,
+    "height": 1024,
+    "greetingBottom": 108.51250076293944,
+    "headingTop": 150.15000915527344,
+    "pageWidth": 753
+  },
+  {
+    "route": "index.php",
+    "width": 390,
+    "height": 844,
+    "greetingBottom": 124.4625015258789,
+    "headingTop": 389.0375061035156,
+    "pageWidth": 375
+  },
+  {
+    "route": "products.php",
+    "width": 390,
+    "height": 844,
+    "greetingBottom": 124.2375030517578,
+    "headingTop": 155.6125030517578,
+    "pageWidth": 375
+  },
+  {
+    "route": "product_details.php?id=2",
+    "width": 390,
+    "height": 844,
+    "greetingBottom": 124.13750076293944,
+    "headingTop": 155.6125030517578,
+    "pageWidth": 375
+  },
+  {
+    "route": "cart.php",
+    "width": 390,
+    "height": 844,
+    "greetingBottom": 124.13750076293944,
+    "headingTop": 155.6125030517578,
+    "pageWidth": 375
+  },
+  {
+    "route": "checkout.php",
+    "width": 390,
+    "height": 844,
+    "greetingBottom": 124.2375030517578,
+    "headingTop": 155.6125030517578,
+    "pageWidth": 375
+  },
+  {
+    "route": "contact.php",
+    "width": 390,
+    "height": 844,
+    "greetingBottom": 124.35000228881836,
+    "headingTop": 155.6125030517578,
+    "pageWidth": 375
+  },
+  {
+    "route": "login.php",
+    "width": 390,
+    "height": 844,
+    "greetingBottom": 124.41250228881836,
+    "headingTop": 155.6125030517578,
+    "pageWidth": 375
+  },
+  {
+    "route": "register.php",
+    "width": 390,
+    "height": 844,
+    "greetingBottom": 124.41250228881836,
+    "headingTop": 155.6125030517578,
+    "pageWidth": 375
+  },
+  {
+    "route": "index.php",
+    "width": 320,
+    "height": 740,
+    "greetingBottom": 128.1875038146973,
+    "headingTop": 311.8999938964844,
+    "pageWidth": 305
+  },
+  {
+    "route": "products.php",
+    "width": 320,
+    "height": 740,
+    "greetingBottom": 133.6875038146973,
+    "headingTop": 178.125,
+    "pageWidth": 305
+  },
+  {
+    "route": "product_details.php?id=2",
+    "width": 320,
+    "height": 740,
+    "greetingBottom": 139.82500076293945,
+    "headingTop": 178.125,
+    "pageWidth": 305
+  },
+  {
+    "route": "cart.php",
+    "width": 320,
+    "height": 740,
+    "greetingBottom": 130.28750228881836,
+    "headingTop": 178.125,
+    "pageWidth": 305
+  },
+  {
+    "route": "checkout.php",
+    "width": 320,
+    "height": 740,
+    "greetingBottom": 131.42499923706055,
+    "headingTop": 178.125,
+    "pageWidth": 305
+  },
+  {
+    "route": "contact.php",
+    "width": 320,
+    "height": 740,
+    "greetingBottom": 131.45000076293945,
+    "headingTop": 178.125,
+    "pageWidth": 305
+  },
+  {
+    "route": "login.php",
+    "width": 320,
+    "height": 740,
+    "greetingBottom": 130.3125038146973,
+    "headingTop": 178.125,
+    "pageWidth": 305
+  },
+  {
+    "route": "register.php",
+    "width": 320,
+    "height": 740,
+    "greetingBottom": 131.42499923706055,
+    "headingTop": 178.125,
+    "pageWidth": 305
+  }
+]

@@ -1,0 +1,8 @@
+Options -Indexes
+
+# Block backups, dotfiles and internal directories even when left in the web root.
+<FilesMatch "(?i)(^\.|\.(sql|log|bak|old|orig|save|swp|zip|tar|gz|ini|env|sqlite3?|db)$|~$)">
+    Require all denied
+</FilesMatch>
+RewriteEngine On
+RewriteRule ^(?:includes|database|tests|tools|docs|\.[^/]+)(?:/|$) - [F,L,NC]

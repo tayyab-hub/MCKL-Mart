@@ -1,0 +1,62 @@
+name: PHP and JavaScript checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  syntax-and-helpers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo_mysql, curl
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: PHP syntax
+        shell: bash
+        run: |
+          set -e
+          find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l
+      - name: JavaScript syntax
+        run: |
+          node --check script.js
+          node --check tests/javascript_test.cjs
+          node --check tools/render-logo.cjs
+      - name: Helper regression tests
+        run: php tests/helpers_test.php
+      - name: Static privacy and asset checks
+        run: php tests/static_test.php
+      - name: Reject obvious private database rows
+        shell: bash
+        run: |
+          ! grep -Eiq 'INSERT INTO `(users|orders|order_details|contact_messages)`' database/*.sql
+          ! grep -Fq '$2y$' database/*.sql
+  integration:
+    runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:10.4
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo_mysql, curl
+      - name: Disposable database and HTTP integration tests
+        env:
+          MCKL_TEST_DB_USER: root
+          MCKL_TEST_DB_HOST: 127.0.0.1
+        run: php tests/integration_test.php --run

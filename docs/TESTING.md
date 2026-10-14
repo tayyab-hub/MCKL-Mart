@@ -1,0 +1,61 @@
+# Reproducing the checks
+
+Run from the repository root. PHP needs `pdo_mysql`, `mbstring` and `curl`; Node.js is needed for JavaScript checks. The application itself needs no npm or Composer installation.
+
+## Fast checks
+
+```powershell
+& C:\xampp\php\php.exe tests/helpers_test.php
+& C:\xampp\php\php.exe tests/static_test.php
+node --check script.js
+node --check tests/javascript_test.cjs
+node --check tools/render-logo.cjs
+Get-ChildItem -Recurse -Filter *.php -File |
+    Where-Object { $_.FullName -notlike '*\.local\*' } |
+    ForEach-Object { & C:\xampp\php\php.exe -l $_.FullName }
+```
+
+## Disposable database and HTTP suite
+
+`tests/integration_test.php` requires a local test administrator with CREATE/DROP DATABASE, table/trigger permissions and PROCESS for concurrent-request observations. Do not expand the storefront account's permissions for testing.
+
+For a local XAMPP administrator that **already** accepts an empty password:
+
+```powershell
+$env:MCKL_TEST_DB_USER = 'root'
+& C:\xampp\php\php.exe tests/integration_test.php --run
+Remove-Item Env:MCKL_TEST_DB_USER
+```
+
+If the test account has a password, set `MCKL_TEST_DB_PASSWORD` privately. In PowerShell 7:
+
+```powershell
+$env:MCKL_TEST_DB_PASSWORD = Read-Host 'Test administrator password' -MaskInput
+# Run the suite, then remove the value from this process.
+Remove-Item Env:MCKL_TEST_DB_PASSWORD
+```
+
+Optional `MCKL_TEST_DB_HOST` / `MCKL_TEST_DB_PORT` default to `127.0.0.1:3306`. Only loopback hosts are accepted. The runner creates two random `mckl_mart_test_*` schemas, verifies combined and split imports, starts two temporary PHP servers, and drops only schemas created by that invocation. It never imports into the portfolio or coursework database.
+
+Coverage includes authentication, carts, search, validation, CSRF, authorization, contact storage, prices, inventory, duplicate submission, concurrent registration and competing checkout for the final item. A disposable failure-injection trigger verifies rollback of orders, lines and stock.
+
+## Browser preview and rendered scripts
+
+Add `--serve` to keep the disposable preview running for up to 30 minutes. The command prints a browser URL and test-directory path. Use fictional details only.
+
+```powershell
+node tests/javascript_test.cjs http://127.0.0.1:PRINTED_PORT
+New-Item -ItemType File -Path 'PRINTED_TEST_DIRECTORY/stop'
+```
+
+Creating `stop` triggers normal cleanup. Logs, sessions and the created-schema manifest remain under ignored, HTTP-blocked `.local/`. If the process is forcefully killed, inspect that invocation's `created-databases.json` before removing only its exact newly created schemas. Never drop databases based only on a broad name prefix.
+
+The integration suite deliberately changes its own product fixtures. For presentation screenshots, the clean combined-import catalogue was copied back into the disposable preview's catalogue; existing project databases were untouched. Browser orders used a separate fictional customer.
+
+## CI and evidence
+
+The GitHub workflow uses Ubuntu, PHP 8.2, Node 22 and an isolated MariaDB 10.4 service. It uses no local Windows paths or private credentials. The empty database password belongs only to that disposable CI service. Workflow permissions are limited to reading repository contents.
+
+Local workflow syntax/semantics were checked with actionlint 1.7.12. Gitleaks 8.30.1 is used for a redacted scan of the staged publication candidate. These tools were obtained from their official releases and their archive checksums verified; tool archives and outputs are excluded from Git.
+
+Current executed results and publication status are recorded in [PUBLICATION_REVIEW.md](PUBLICATION_REVIEW.md). Earlier repair findings remain in [REPAIR_REPORT.md](REPAIR_REPORT.md). `layout-checks.json` is historical evidence of 32 viewport measurements, not a fresh accessibility certification.
