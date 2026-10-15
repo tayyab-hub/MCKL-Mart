@@ -1,69 +1,87 @@
-# Live deployment review — 14 October 2026
+# Live deployment review — 15 October 2026
 
-Timezone: Asia/Kuala_Lumpur. Live site: https://mcklmart.site.je/. Source: https://github.com/tayyab-hub/MCKL-Mart.
+Timezone: Asia/Kuala_Lumpur. [Live demo](https://mcklmart.site.je/) · [Source repository](https://github.com/tayyab-hub/MCKL-Mart).
 
 ## Release status
 
-The live baseline is accessible. The hardening candidate is prepared locally on `codex/public-demo-hardening`, based on published commit `d6adb518ba9a39ee4d324cf326fbdc3f4c7b471e`. It has not been pushed, merged or uploaded. No existing production website file or production database record was changed by this review. Browser cart testing changed only the review session and the cart was cleared afterward. The owner uploaded harmless access markers; their removal is still an owner action.
+Runtime commit `772b90fb615ee01785dcdf13928fdddcee20e0c1` was deployed successfully to InfinityFree's `/htdocs` directory on 15 October 2026. The nine existing files were backed up outside the public web root before replacement. All ten uploads matched the approved package by byte size and SHA-256 readback. `includes/demo.php` was uploaded first and `.htaccess` last. No rollback was needed.
 
-The owner reported passing homepage/images, search/filtering, registration/login, cart, simulated checkout, order history and logout. These are **user-reported**, not independent tests of this new release.
+Deployment reused an already-authenticated WinSCP session without extracting, exporting, logging or hard-coding credentials. Private configuration was neither downloaded nor changed. No schema migration, database reset or production-record creation, modification or deletion was performed. Browser cart checks changed only the review session, which was cleared afterward. The login test updated only the application's expected limiter state.
 
-## Important findings and prepared fixes
+All **21 live checks passed**. HTTPS redirection, browser presentation and marker cleanup were also verified separately. The subsequent GitHub update records these results and reruns local tests; it does not change the deployed runtime or production database. Source changes are proposed through `codex/public-demo-hardening` into `main`, with merge subject to passing checks and owner approval.
 
-| Finding | Evidence and response |
+## Findings and deployed fixes
+
+| Finding before deployment | Deployed behavior and evidence |
 | --- | --- |
-| HTTP was not universally redirected | A direct HTTP GET of the public control returned 200, marker text, and no Location header. Browser navigation upgraded to HTTPS, so it was not sufficient evidence of server enforcement. Prepared a fixed-host 302 rule while preserving all original rules. Hosted verification remains pending. |
-| Persistent abuse controls were absent | Added per-client/account/global limits, a bounded locked state file, form spam trap, 16-KiB POST bound and record caps. No database migration is needed. |
-| Forms accepted visitor personal data | Public demo mode now replaces personal fields with generated/fixed sample values and uses a fixed contact message. The UI labels these choices and asks for a temporary password. Original validation stays available in explicit local coursework mode. |
-| Proxy-dependent cookie detection | The known public hostname now always issues Secure cookies without trusting arbitrary forwarding headers. HttpOnly, SameSite=Lax and session rotation remain. Actual new hosted cookie flags must be checked after upload. |
-| Guest confirmation wording | A regression test caught missing explicit simulated-fulfillment wording in the guest dialog; it now says Demo Order Saved and that no real payment/delivery occurs. |
-| Existing data and stock need owner operations | Caps count all records and pause writes without deleting anything. Existing private data is not scrubbed, and simulated orders still deduct sample stock. A selective manual cleanup procedure is documented. |
+| HTTP was not universally redirected | The earlier public control returned HTTP 200 without a Location header. The appended fixed-host rule now returns 302 to the same HTTPS path and query, without a loop. All original denial rules were preserved. |
+| Persistent abuse controls were absent | Per-client/account/global limits, a bounded locked state file, spam trap, 16-KiB POST bound and record caps are deployed. Live login throttling and the POST bound passed; other quotas, caps and concurrent locking passed local tests. |
+| Forms accepted visitor personal data | Public demo mode replaces personal fields with generated/fixed sample values and a fixed contact message. Live forms displayed these values; disposable local tests verified replacement of forged POST fields before storage. |
+| Proxy-dependent cookie detection | The known public hostname always issues Secure cookies. Live HTTPS responses carried Secure, HttpOnly and SameSite=Lax; session rotation remains regression-tested locally. |
+| Guest confirmation wording | The guest dialog explicitly says Demo Order Saved and that no real payment or delivery occurs. Its workflow passed locally; no hosted order was submitted during this review. |
+| Existing data and stock need owner operations | Caps include all existing records and pause writes without deleting anything. Legacy data is not scrubbed, and demonstration orders still deduct sample inventory. The operations guide describes selective review. |
 
-## Independently executed hosted checks
+## The 21 executed live checks
 
-| Check | Result |
+These are deployment-time results, not continuous monitoring or a claim that every hosted workflow was exercised.
+
+| Checks | Result |
 | --- | --- |
-| TLS certificate validation | Passed via a standard verified TLS connection: TLS 1.3, ZeroSSL ECC DV SSL CA 2 issuer, SAN includes `*.site.je`, valid 16 August–14 November 2026. Monitor renewal through the hosting provider. |
-| Homepage | Rendered in a real browser with academic-demo notice. |
-| Search | `green tea` returned one matching product. |
-| Category and images | Meals returned four products; all four images loaded. |
-| Cart | Added Tuna Melt Sandwich, observed quantity 1 / RM 8.90, then cleared the session cart. |
-| Checkout | Form/Place Demo Order control rendered; no hosted order was submitted. |
-| Mobile | Catalogue and checkout checked at a 390×844 viewport; document width 375, no horizontal overflow. |
-| Public control | Harmless marker text visible after a cache-busting recheck. An earlier 404 was cached; it was not counted as a passed control check. |
-| Seven protected paths | All showed InfinityFree's 403 Forbidden page: includes, database, tests, tools, docs, `.local`, and a root `.bak` marker. The owner reported uploading the files with their directory structure. Browser denial proves access was blocked, not direct filesystem presence. |
-| Existing live rules | Owner pasted `/htdocs/.htaccess`; it matched the local baseline. No live rule was overwritten. |
-| Direct HTTP control | **Failed redirect expectation:** HTTP 200 without Location, confirming a remaining hosted redirect gap. |
+| 1 — Login page | Actual application response, HTTP 200. |
+| 2 — Session cookie | `MCKLMARTSESSID` carried Secure, HttpOnly and SameSite=Lax. |
+| 3 — Security headers | `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: same-origin`. |
+| 4–7 — Invalid CSRF | Login, registration, contact and checkout each rejected an invalid token with HTTP 403. |
+| 8 — Oversized POST | Rejected with HTTP 413. |
+| 9–10 — Fictional forms | Registration and contact rendered generated identities and read-only personal fields. |
+| 11 — Public control | Harmless marker returned HTTP 200 with the expected marker text. |
+| 12–18 — Protected markers | The root `.bak` marker and markers under `includes`, `database`, `tests`, `tools`, `docs` and `.local` were inaccessible. Each returned HTTP 302 to `https://errors.infinityfree.net/errors/403/`, the provider's access-denied page; these were not raw HTTP 403 responses. |
+| 19 — Persistent login limit | Ten invalid attempts received generic failure responses; the eleventh returned HTTP 429 with `Retry-After` (882 seconds remaining when observed). No successful login or account creation was performed. |
+| 20 — Homepage after tests | Actual application remained available with HTTP 200. |
+| 21 — Unauthenticated history | Redirected to `index.php?auth=login`, the application's login entry point. |
 
-Initial command-line HTTPS/HTTP fetches were interrupted or received InfinityFree's JavaScript browser challenge. Those HTTP-200 challenge responses were **not** counted as application success or private-file access results. A real browser completed the marker checks. No secret-bearing URL or real config was requested.
+InfinityFree's JavaScript browser challenge can also return HTTP 200. Challenge bodies were not counted as application success or private-file results. The public control's expected content and the provider's explicit denial destination distinguished protection from general hosting errors. No real configuration, customer record or secret-bearing URL was requested.
 
-Hosted negative CSRF tests, authentication/authorization tests, runtime error injection, actual session response attributes and new rate/storage limits are not independently verified. Production record-writing tests were deliberately left for the owner to run after reviewing/uploading the candidate; local tests cover those paths. Server PHP startup error settings and filesystem locking support still need host validation.
+The history assertion initially expected `login.php`; it was corrected to the application's actual `index.php?auth=login` behavior and rechecked without changing application code.
 
-## Executed local candidate checks
+## Additional deployment verification
 
-- Original integration suite: 116 checks passed.
-- Extended integration suite: 162 total checks, including 46 public-demo checks. Covers generated identities, replacement of forged personal fields, CSRF, cookie policy, login after signup, guest-order linking, authorization, session-independent limits, spoofed client headers, body/quantity bounds, all storage caps, simultaneous last-slot registration and fail-closed corrupted state.
-- Dedicated limiter/privacy suite: 32 checks, including eight concurrent PHP processes competing for a three-attempt quota, expiry, account/IP changes and bounded/corrupt/unavailable state.
-- Helper suite: 21 checks. Static privacy/asset suite: 33 checks.
-- PHP syntax: 25 tracked/new PHP source files; no failures. Four external/rendered JavaScript blocks parsed. Workflow accepted by actionlint.
-- Local Apache: harmless control HTTP 200; seven protected markers HTTP 403. Fixed public Host produced HTTP 302 to the fixed HTTPS domain, while localhost remained accessible. All eight local markers were removed afterward.
-- Mobile browser preview used only newly created disposable databases. Signup with generated fields, cart and simulated delivery/card checkout worked. Public hosting records were not used.
-- Mobile order history and logout also worked. Spam-trap controls were verified hidden and excluded from visible keyboard focus. Both disposable schemas and preview servers were cleaned up after testing.
+- **HTTPS:** normal TLS certificate validation passed. Direct HTTP returned a fixed-host 302 preserving the path and query; HTTPS loaded without a redirect loop. The temporary redirect remains in place; HSTS is not enabled. The earlier certificate inspection recorded a ZeroSSL certificate valid through 14 November 2026; renewal remains a hosting responsibility.
+- **Browser:** the homepage displayed the academic-demo notice; `green tea` search returned one result and all 17 catalogue images loaded. The session cart showed Chilled Green Tea, quantity 1, RM 3.50. Checkout preview displayed fixed read-only personal fields; no order was submitted.
+- **Mobile:** checkout was checked at a 390×844 viewport, with document width 375 and no horizontal overflow. The session cart was cleared and the homepage remained healthy after cleanup.
+- **Markers:** only the eight explicit paths in the [deployment checklist](DEPLOYMENT.md#completed-temporary-marker-cleanup) were deleted. A fresh recursive FTP search found zero matches, and the former public control displayed the provider's 404 page in a browser. Parent directories and legitimate files were retained.
+- **Rollback:** nine original files remain in the private local backup, with a verified manifest. No backup or transfer log is part of the public repository. No rollback was necessary.
 
-## Exact candidate files
+Before hardening, the owner reported successful homepage/images, search/filtering, registration/login, cart, simulated checkout, order history and logout. That report is historical owner evidence, not independent verification of successful production writes after this release.
 
-Runtime upload (10): `.htaccess`, `checkout.php`, `contact.php`, `login.php`, `register.php`, `style.css`, `includes/bootstrap.php`, `includes/demo.php` (new), `includes/footer.php`, `includes/header.php`.
+## Local checks rerun for the GitHub review
+
+Executed on 15 October 2026:
+
+- **162 integration checks:** the original 116 plus 46 public-demo checks. Covers generated identities, forged-field replacement, authentication, guest-order linking, authorization, session-independent limits, spoofed client headers, body/quantity bounds, all storage caps, simultaneous last-slot registration and fail-closed corrupted state.
+- **32 limiter/privacy checks:** includes eight concurrent PHP processes competing for a three-attempt quota, expiry, account/IP changes and bounded/corrupt/unavailable state.
+- **21 helper checks and 33 static privacy/asset checks.**
+- **Syntax:** all 25 tracked PHP files, three JavaScript sources and four external/rendered script blocks passed. The Actions workflow passed actionlint.
+- **Cleanup:** both newly created disposable schemas were dropped and the temporary PHP servers stopped normally. Existing local and production databases were not used for test records.
+
+The earlier 14 October local Apache marker checks and disposable mobile signup/checkout/history/logout checks also passed. They remain local historical evidence, not additional hosted checks. See [reproduction instructions](TESTING.md).
+
+## Source, assets and privacy review
+
+Runtime files (10): `.htaccess`, `checkout.php`, `contact.php`, `login.php`, `register.php`, `style.css`, `includes/bootstrap.php`, `includes/demo.php` (new), `includes/footer.php`, `includes/header.php`.
 
 Repository-only changes (13): `.github/workflows/ci.yml`, `.gitignore`, `README.md`, `PORTFOLIO_CHANGES.md`, `docs/PUBLICATION_REVIEW.md`, `docs/TESTING.md`, `docs/DEMO_OPERATIONS.md` (new), `docs/DEPLOYMENT.md` (new), `docs/LIVE_DEPLOYMENT_REVIEW.md` (new), `tests/integration_test.php`, `tests/demo_scenarios.php` (new), `tests/demo_test.php` (new), `tools/prepare-deployment.ps1` (new).
 
-No product image, screenshot, schema, seed, private configuration or other repository is changed.
+The 81-file public tree excludes local configuration, credentials, limiter state, customer records, backups, logs, temporary probes and tool downloads. The SQL files contain only schema and sample catalogue data. Redacted Gitleaks scans cover the publication tree and outgoing Git history. All 17 product-image hashes, all eight screenshot hashes and both Mermaid blocks are preserved; relative documentation and image links resolve. The screenshots remain genuine captures of the original reviewed interface and are explicitly labeled as predating the additional demo restrictions.
 
-Final packaging checks passed: 81 staged candidate files, 41 resolved relative documentation/image links, unchanged hashes for all 17 product images and eight screenshots, and byte-identical preserved Mermaid blocks. Exactly ten runtime files match the staged source and SHA-256 upload manifest. Redacted Gitleaks scans found no leaks in either the source candidate or upload package. The existing private database password was compared privately against the candidate and was absent; the private config's baseline hash is unchanged.
+The published baseline's [GitHub Actions run](https://github.com/tayyab-hub/MCKL-Mart/actions/runs/38567544084) passed. The workflow now includes the new limiter/privacy and extended integration suites. The pull request's Checks tab is the authoritative CI result for its exact revision; the README badge tracks `main`. Publishing or merging source does not deploy files to InfinityFree.
 
-The published baseline's [GitHub Actions run](https://github.com/tayyab-hub/MCKL-Mart/actions/runs/38567544084) passed. The modified workflow adds the new limiter tests and extended integration checks, but **no hosted CI result is claimed for this unpushed branch**. The eight gallery screenshots, architecture diagrams and product assets remain preserved. New source/documentation link checks and package privacy checks are part of the release handoff.
+## Remaining limitations
 
-## Readiness
+- Successful account login, registration, completed checkout, authenticated owner history and contact writes were not independently repeated against production after deployment. They passed disposable local tests; production records were intentionally preserved.
+- Only login rate limiting was exercised live. Other quotas, database caps, concurrent locking and injected failures retain local coverage. Operational login state does not prove every host concurrency scenario.
+- Hosting-level PHP startup/parse-error settings were not independently inspected. Application exception handling cannot hide errors that occur before bootstrap runs.
+- Free-hosting outages/resource limits, shared-IP throttling, deliberate quota exhaustion and distributed abuse remain possible. This is not DDoS protection or an uptime commitment.
+- Legacy records are not anonymized, provider logs/session storage are outside application row caps, and visitors can still reuse a real password despite the temporary-password notice. Owner review and sample-inventory maintenance remain manual.
+- TLS renewal needs ongoing hosting support; no automatic deployment/monitoring, HSTS, production load test or security certification is claimed.
 
-Ready for owner review and a controlled manual upload, **not yet verified as deployed hardening**. Confirm the HTTPS redirect, Secure cookie flags, writable locked limiter state, actual hosted workflows and marker cleanup before calling the live release ready for recruiters. Free-hosting outages/resource limits, shared-IP throttling, deliberate quota exhaustion, provider logs, reused visitor passwords and legacy records remain practical limitations. No production-security certification is claimed.
-
-See [exact upload/removal instructions](DEPLOYMENT.md), [demo limits and cleanup](DEMO_OPERATIONS.md) and [test commands](TESTING.md). GitHub push/merge requires the owner's approval after the local and hosted review.
+See [deployment and rollback](DEPLOYMENT.md), [demo limits and cleanup](DEMO_OPERATIONS.md), and [test commands](TESTING.md).

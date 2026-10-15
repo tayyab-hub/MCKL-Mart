@@ -1,6 +1,6 @@
 # Public demo operations
 
-This release candidate is for an unofficial academic demonstration. It does not process payments, deliveries or support emails. Its controls require a writable `includes` directory and PHP `flock()` support on one shared application filesystem; hosted verification is required before declaring the release ready.
+This unofficial academic demonstration was deployed on InfinityFree on 15 October 2026. It does not process payments, deliveries or support emails. Its controls require a writable `includes` directory and PHP `flock()` support on one shared application filesystem. The hosted login limiter accepted ten attempts and rejected the eleventh with HTTP 429, demonstrating operational state persistence; concurrent locking, other quotas and database caps were tested locally. See the [deployment review](LIVE_DEPLOYMENT_REVIEW.md) for the full verification scope.
 
 ## Privacy choices and trade-offs
 

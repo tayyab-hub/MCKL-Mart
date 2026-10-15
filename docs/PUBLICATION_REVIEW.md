@@ -3,7 +3,7 @@
 **Muhammad Tayyab — Individual Web Computing Project**
 Reviewed 14 October 2026 · Asia/Kuala_Lumpur
 
-This records the original GitHub publication. The subsequent InfinityFree deployment and unpushed hardening candidate are documented in [LIVE_DEPLOYMENT_REVIEW.md](LIVE_DEPLOYMENT_REVIEW.md).
+This records the original GitHub publication. The subsequent verified InfinityFree hardening deployment of 15 October 2026 and its separate GitHub review are documented in [LIVE_DEPLOYMENT_REVIEW.md](LIVE_DEPLOYMENT_REVIEW.md). Historical test counts and publication statements below describe the original release.
 
 ## Current status
 

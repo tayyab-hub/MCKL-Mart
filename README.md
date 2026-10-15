@@ -13,7 +13,7 @@ A convenience-store demonstration hosted on InfinityFree and runnable locally. B
 
 > **Academic demonstration only.** This project is not operated, sponsored or endorsed by Methodist College Kuala Lumpur. Products, payments and fulfillment are simulated. Use fictional information and a temporary password only. No real charge, delivery or support email is connected.
 
-The live site is available; the additional demo-hardening changes in this branch are a **release candidate awaiting manual upload and hosted verification**. See the [deployment review](docs/LIVE_DEPLOYMENT_REVIEW.md) for the distinction between observed hosted behavior, user-reported tests and local checks.
+The hardened demo was deployed on **15 October 2026**. All ten uploaded runtime files matched the reviewed source, and **21 live checks passed**, covering cookies, headers, CSRF rejection, private-path protection and login throttling. HTTP-to-HTTPS redirection was also verified. See the [deployment review](docs/LIVE_DEPLOYMENT_REVIEW.md) for the evidence and testing limits.
 
 [Features](#features) · [Architecture](#system-architecture) · [Installation](#installation) · [Testing](#testing) · [Limitations](#known-limitations)
 
@@ -57,7 +57,7 @@ The engineering focus is the full request lifecycle: validate submitted fields, 
 | Order history | Account-owned orders and details; a guest can link their latest order by registering in the same session with its matching email. |
 | Contact | Validated messages saved to the local database with confirmation; no email transmission. |
 | Interface | Responsive layouts, keyboard-accessible controls, dialog focus handling, visible focus and a pausable slideshow. |
-| Public-demo safeguards | Generated sample identities, fixed personal fields and sample messages; persistent submission limits, bounded records and small POST bodies. This release candidate requires hosted verification. |
+| Public-demo safeguards | Generated sample identities, fixed personal fields and sample messages; persistent submission limits, bounded records and small POST bodies. Deployed with the verification scope documented below. |
 
 There is no admin product-management dashboard, payment gateway, courier integration or password-recovery service.
 
@@ -181,21 +181,22 @@ Environment alternatives: `MCKL_DB_HOST`, `MCKL_DB_PORT`, `MCKL_DB_NAME`, `MCKL_
 
 ## Deployment
 
-The public demo uses InfinityFree free hosting, PHP, MariaDB and Apache-compatible rules. Releases are uploaded manually through WinSCP into `/htdocs`, after reviewing the changed runtime files. The live database configuration stays on the host and is never included in Git or the upload bundle. Free hosting has availability, traffic, storage and execution limits; this is an academic demonstration, not a production store or uptime commitment.
+The public demo uses InfinityFree free hosting, PHP and Apache-compatible rules with the application's MySQL-compatible database connection. MariaDB is the independently tested local and CI engine; the hosted database version was not inspected. The reviewed runtime files were deployed through an authenticated WinSCP session into `/htdocs`, with nine original files backed up and all ten uploads verified by size and SHA-256 readback. GitHub Actions tests the source; it does not deploy the website. The live database configuration stays on the host and is never included in Git or the upload bundle. Free hosting has availability, traffic, storage and execution limits; this is an academic demonstration, not a production store or uptime commitment.
 
 Public demo mode is enabled by default. It supplies generated `demo-…@example.test` identities and fixed names, phone/address fields and contact-message text, so visitors can demonstrate the workflow without providing real contact details. Choose a temporary password and save the generated email for later login. Standard coursework validation remains available only through the trusted server setting `MCKL_DEMO_MODE=0`; leave that override unset on the public host.
 
-The proposed release caps login, signup, contact and checkout attempts independently of browser sessions. Total records are capped at 200 accounts, 500 orders, 5,000 order lines and 200 contact messages. Full or unavailable protection storage pauses submissions while allowing browsing. There is no automatic deletion, cron requirement or schema migration. The [operations guide](docs/DEMO_OPERATIONS.md) explains limits, shared-network trade-offs and manual cleanup.
+The deployed release caps login, signup, contact and checkout attempts independently of browser sessions. Total records are capped at 200 accounts, 500 orders, 5,000 order lines and 200 contact messages. Full or unavailable protection storage pauses submissions while allowing browsing. There is no automatic deletion, cron requirement or schema migration. The [operations guide](docs/DEMO_OPERATIONS.md) explains limits, shared-network trade-offs and manual cleanup.
 
-Follow the [WinSCP release checklist](docs/DEPLOYMENT.md), including the HTTPS redirect and private-marker checks. Do not overwrite private configuration or re-import the database. The [deployment review](docs/LIVE_DEPLOYMENT_REVIEW.md) records what was independently verified; a successful local test is not a claim that the revised files are already deployed.
+HTTP requests to the public host redirect to the same HTTPS path and query using a fixed-host 302 rule. HTTPS certificate validation and the absence of redirect loops were verified; the session cookie carried `Secure`, `HttpOnly` and `SameSite=Lax`. Seven private-path markers were denied while a public control was accessible. All eight temporary markers were then removed. The [release checklist](docs/DEPLOYMENT.md) and [deployment review](docs/LIVE_DEPLOYMENT_REVIEW.md) record the process, rollback procedure and verification scope. Private configuration and production database records were untouched.
 
 ## Testing
 
-Local verification on **14 October 2026** executed and passed **116 integration checks, 21 helper checks and 33 static checks**, plus PHP and JavaScript syntax checks. The integration suite imports both database setup paths and exercises concurrent checkout, concurrent registration, authorization, CSRF, validation and failure rollback. These results are local evidence, not a coverage or production-security claim.
+Local verification on **15 October 2026** passed **162 integration checks** (116 original regression checks plus 46 demo-protection checks), **32 limiter/privacy checks**, **21 helper checks** and **33 static checks**. All 25 tracked PHP files, three JavaScript sources, four external/rendered script blocks and the Actions workflow passed syntax validation. The integration suite imports both database setup paths and exercises concurrent checkout, concurrent registration, authorization, CSRF, validation, storage caps and failure rollback. These results are local evidence, not a coverage or production-security claim.
 
 ```powershell
 & C:\xampp\php\php.exe tests/helpers_test.php
 & C:\xampp\php\php.exe tests/static_test.php
+& C:\xampp\php\php.exe tests/demo_test.php
 node --check script.js
 ```
 
@@ -203,14 +204,14 @@ The integration runner requires an explicitly configured local test administrato
 
 The [GitHub Actions workflow](.github/workflows/ci.yml) passed both hosted jobs for the published baseline on 14 October 2026: PHP/JavaScript syntax, 21 helper checks, 33 static checks and 116 MariaDB integration checks. The [verified published run](https://github.com/tayyab-hub/MCKL-Mart/actions/runs/38567544084) records that result; the badge above tracks `main`. All eight screenshots and both Mermaid diagrams were verified on the published README.
 
-The hardening candidate passed **162 local integration checks** (the original 116 plus 46 demo-protection checks), **32 limiter/privacy checks**, the 21 helper and 33 static checks, and PHP/JavaScript syntax validation. The workflow now includes the new tests, but its hosted run awaits approval to push this branch. See [testing instructions](docs/TESTING.md) and the [deployment review](docs/LIVE_DEPLOYMENT_REVIEW.md).
+The workflow also runs the new limiter/privacy and extended integration suites on pushes and pull requests. Use the pull request's **Checks** tab for the result on its exact revision; the badge above continues to track `main`. See [testing instructions](docs/TESTING.md) and the [deployment review](docs/LIVE_DEPLOYMENT_REVIEW.md) for the separate local and live evidence.
 
 ## Security features
 
 - Native PDO prepared statements; shared server-side input validation and escaped HTML output.
 - `password_hash` / `password_verify`; validation limits bcrypt input to 72 bytes.
 - Session-bound CSRF tokens and POST-only cart/logout mutations.
-- Dedicated session cookie, strict mode, HttpOnly, SameSite=Lax and HTTPS-dependent Secure; session rotation on authentication.
+- Dedicated session cookie, strict mode, HttpOnly, SameSite=Lax and Secure on HTTPS or the known public hostname; session rotation on authentication. All three cookie flags were observed on the live HTTPS response.
 - Exact local redirect allowlist, owner-restricted history/confirmations and generic browser error responses.
 - Transactional checkout with row locking, inventory checks and rollback.
 - Public-demo submission limits use a locked, bounded file shared by PHP workers, with hashed client/account identifiers and fail-closed behavior. Record-cap checks hold the same lock through database writes.
@@ -222,11 +223,13 @@ These are implemented and regression-tested controls. No penetration-test certif
 
 - Payments and pickup/delivery are simulated; contact messages stay in MariaDB.
 - No email verification, password reset, admin dashboard or order-status management UI. Generated demo accounts should use a unique temporary password.
-- New demo safeguards and the proposed server-side HTTPS redirect await manual deployment and hosted verification. Shared networks/proxies can share a rate limit; distributed abuse and hosting resource exhaustion are not eliminated.
+- Shared networks/proxies can share a rate limit; distributed abuse, deliberate quota exhaustion and hosting resource exhaustion are not eliminated.
+- Signup, successful account login, completed orders and contact writes were regression-tested locally, not independently repeated against production after deployment. Only login throttling was exercised live; other quotas, caps and concurrency retain local test coverage. Hosting-level PHP startup error settings remain unverified.
+- Demo orders reduce sample inventory, and capped records require deliberate owner review; there is no automatic cleanup or restocking. HSTS is not enabled.
 - Other database engines, broad cross-browser/device coverage, accessibility certification and load testing remain unverified.
 - Existing installations do not automatically receive the new schema CHECK constraints; a reviewed migration is needed. Do not re-import to upgrade.
 - AI product art is fictional. The author confirms generating all 17 images using ChatGPT Image Generation for this assignment; exact model/version and prompts are not recorded. See [asset review](docs/ASSETS.md).
-- InfinityFree runs the PHP/MariaDB demo; GitHub hosts the source. Free-hosting availability and resource limits still apply. Existing stored records are not scrubbed by this release and need separate owner review if they contain real data.
+- InfinityFree runs the PHP/database demo; GitHub hosts the source. Free-hosting availability and resource limits still apply. Existing stored records are not scrubbed by this release and need separate owner review if they contain real data.
 
 ## Future improvements
 
