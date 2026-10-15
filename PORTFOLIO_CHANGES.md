@@ -1,4 +1,10 @@
-# Portfolio changes — 14 October 2026
+# Portfolio changes — updated 15 October 2026
+
+## Deployed public-demo hardening
+
+Runtime commit `772b90fb615ee01785dcdf13928fdddcee20e0c1` was deployed to InfinityFree on 15 October 2026. It adds persistent bounded abuse controls, generated demo identities, record caps, Secure cookies for the public host, a domain-scoped HTTPS redirect and an explicit WinSCP upload package. Nine original files were backed up; all ten uploads matched by size and SHA-256 readback. Twenty-one live checks passed, HTTP-to-HTTPS redirection was verified, and all eight temporary security markers were removed. No production database records or private configuration were changed.
+
+The follow-up GitHub update on `codex/public-demo-hardening` documents those results and limitations without modifying the deployed runtime. Local tests passed again: 162 integration, 32 limiter/privacy, 21 helper and 33 static checks, plus PHP/JavaScript syntax and actionlint. The original eight screenshots, both Mermaid diagrams and all product images are preserved. The README prominently links the live demo. See [deployment evidence and outstanding verification](docs/LIVE_DEPLOYMENT_REVIEW.md); pull-request checks validate the proposed source revision before merge.
 
 **Muhammad Tayyab — Individual Web Computing Project**
 

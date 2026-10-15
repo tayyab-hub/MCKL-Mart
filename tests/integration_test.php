@@ -77,13 +77,14 @@ function expectDbReject(PDO $db, string $sql, string $label): void {
     finally { $db->rollBack(); }
     check($rejected, $label);
 }
-function startServer(string $dbName, string $suffix): string {
+function startServer(string $dbName, string $suffix, bool $demo = false): string {
     global $root, $temp, $host, $port, $user, $password, $servers;
     $socket = stream_socket_server('tcp://127.0.0.1:0', $errno, $error);
     if (!$socket) throw new RuntimeException('Cannot reserve local test port');
     $address = stream_socket_get_name($socket, false);
     fclose($socket);
-    $env = array_merge(getenv(), ['MCKL_DB_HOST'=>$host,'MCKL_DB_PORT'=>$port,'MCKL_DB_NAME'=>$dbName,'MCKL_DB_USER'=>$user,'MCKL_DB_PASSWORD'=>$password,'MCKL_TEST_EMPTY_PASSWORD'=>$password === '' ? '1' : '0']);
+    $env = array_merge(getenv(), ['MCKL_DB_HOST'=>$host,'MCKL_DB_PORT'=>$port,'MCKL_DB_NAME'=>$dbName,'MCKL_DB_USER'=>$user,'MCKL_DB_PASSWORD'=>$password,'MCKL_TEST_EMPTY_PASSWORD'=>$password === '' ? '1' : '0',
+        'MCKL_DEMO_MODE'=>$demo ? '1' : '0', 'MCKL_DEMO_STATE_PATH'=>$temp.'/demo-state.php']);
     $proc = proc_open([PHP_BINARY, '-d', 'session.save_path='.$temp, '-d', 'display_errors=0', '-S', $address, '-t', $root, $root.'/tests/router.php'],
         [0=>['pipe','r'],1=>['file',$temp.'/server-'.$suffix.'.log','a'],2=>['file',$temp.'/server-'.$suffix.'.log','a']], $pipes, $root, $env, ['bypass_shell'=>true, 'create_no_window'=>true]);
     if (!is_resource($proc)) throw new RuntimeException('Could not start PHP test server');
@@ -294,8 +295,23 @@ try {
     check(($r1['status']===302 ? 1:0)+($r2['status']===302 ? 1:0)===1, 'Final-item race: exactly one checkout succeeds');
     check(str_contains($r1['body'].$r2['body'],'no longer available'), 'Final-item loser receives stock feedback');
     check((int)$db->query('SELECT stock FROM products WHERE product_id=5')->fetchColumn()===0 && (int)$db->query('SELECT COUNT(*) FROM order_details WHERE product_id=5')->fetchColumn()===1, 'Final-item race: no oversell or partial order');
-    echo "RESULT: $passed checks passed.\n";
+    echo "BASELINE RESULT: $passed checks passed.\n";
+    $demoBase = startServer($created[0], 'demo', true);
+    $demoBaseTwo = startServer($created[0], 'demo-two', true);
+    $demoDb = new PDO("mysql:host=$host;port=$port;dbname=".$created[0].";charset=utf8mb4", $user, $password, $options);
+    require __DIR__ . '/demo_scenarios.php';
+    run_demo_checks($demoDb, $demoBase, $demoBaseTwo, $temp);
+    echo "RESULT: $passed checks passed including public-demo protections.\n";
     if (in_array('--serve',$argv,true)) {
+        if (in_array('--demo-preview',$argv,true)) {
+            // Only this invocation's disposable schema and state are reset for
+            // visual QA, after the cap tests. Existing databases are untouched.
+            $demoDb->exec('DELETE FROM orders');
+            $demoDb->exec('DELETE FROM users');
+            $demoDb->exec('DELETE FROM contact_messages');
+            unlink($temp.'/demo-state.php');
+            $base = $demoBase;
+        }
         file_put_contents($temp.'/browser-url.txt',$base);
         echo "BROWSER_URL=$base\nTEST_DIRECTORY=$temp\nCreate $temp/stop to stop the preview and clean up.\n";
         // A stop file also works when the calling terminal has no open stdin.

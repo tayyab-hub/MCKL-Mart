@@ -44,6 +44,8 @@ if (is_logged_in()) {
 // This block only runs when the form is submitted (an HTTP POST request).
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require_valid_csrf();
+    $demoLease = demo_guard($pdo, 'checkout');
+    demo_prepare_post('checkout', $prefill['email'] ?? '');
 
     // Read each submitted field from $_POST; trim() removes extra spaces, ?? '' gives a default if missing.
     $firstName   = sanitizeInput($_POST['firstName'] ?? '');
@@ -260,6 +262,13 @@ $defFirst  = $old['firstName'] ?? ($nameParts[0] ?? '');
 $defLast   = $old['lastName']  ?? ($nameParts[1] ?? '');
 $defEmail  = $old['email']     ?? $prefill['email'];
 $defPhone  = $old['phone']     ?? $prefill['phone'];
+if (public_demo_mode()) {
+    $defFirst = 'Demo';
+    $defLast = 'Visitor';
+    $defEmail = is_demo_email($prefill['email'] ?? '') ? $prefill['email'] : demo_email();
+    $defPhone = '0100000000';
+    $old['address'] = '10 Example Street, Demo City';
+}
 $ff        = $old['fulfillment'] ?? 'pickup';
 $pay       = $old['payment'] ?? 'cash';
 ?>
@@ -267,7 +276,7 @@ $pay       = $old['payment'] ?? 'cash';
     <header class="page-hero" role="banner">
         <div class="container">
             <h1><span class="highlight">Checkout</span></h1>
-            <p>Complete your order details below — fast and easy!</p>
+            <p>Try a simulated order — no payment or delivery takes place.</p>
             <nav class="breadcrumb" aria-label="Breadcrumb">
                 <a href="index.php">Home</a> <span>›</span>
                 <a href="cart.php">Cart</a> <span>›</span> <span>Checkout</span>
@@ -313,6 +322,7 @@ $pay       = $old['payment'] ?? 'cash';
                             <form id="checkoutForm" method="post" action="checkout.php"
                                   data-logged-in="<?= is_logged_in() ? '1' : '0' ?>" aria-label="Checkout form">
                                 <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+                            <?php demo_honeypot(); ?>
                                 <input type="hidden" name="guest" id="guestFlag" value="0">
 
                                 <fieldset style="border:none;padding:0;margin-bottom:1.5rem;">
@@ -322,7 +332,7 @@ $pay       = $old['payment'] ?? 'cash';
                                     <div class="form-row">
                                         <div class="form-group">
                                             <label class="form-label" for="firstName">First Name <span class="req">*</span></label>
-                                            <input type="text" id="firstName" name="firstName" class="form-control <?= isset($errors['firstName']) ? 'invalid' : '' ?>"
+                                            <input type="text" id="firstName" <?= public_demo_mode() ? 'readonly' : '' ?> name="firstName" class="form-control <?= isset($errors['firstName']) ? 'invalid' : '' ?>"
                                                 value="<?= e($defFirst) ?>" placeholder="e.g. Ahmad" data-validate="name">
                                             <?php if (isset($errors['firstName'])): ?>
                                                 <div class="form-feedback error">⚠ <?= e($errors['firstName']) ?></div>
@@ -330,7 +340,7 @@ $pay       = $old['payment'] ?? 'cash';
                                         </div>
                                         <div class="form-group">
                                             <label class="form-label" for="lastName">Last Name <span class="req">*</span></label>
-                                            <input type="text" id="lastName" name="lastName" class="form-control <?= isset($errors['lastName']) ? 'invalid' : '' ?>"
+                                            <input type="text" id="lastName" <?= public_demo_mode() ? 'readonly' : '' ?> name="lastName" class="form-control <?= isset($errors['lastName']) ? 'invalid' : '' ?>"
                                                 value="<?= e($defLast) ?>" placeholder="e.g. Razali" data-validate="name">
                                             <?php if (isset($errors['lastName'])): ?>
                                                 <div class="form-feedback error">⚠ <?= e($errors['lastName']) ?></div>
@@ -339,7 +349,7 @@ $pay       = $old['payment'] ?? 'cash';
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label" for="email">Email Address <span class="req">*</span></label>
-                                        <input type="email" id="email" name="email" class="form-control <?= isset($errors['email']) ? 'invalid' : '' ?>"
+                                        <input type="email" id="email" <?= public_demo_mode() ? 'readonly' : '' ?> name="email" class="form-control <?= isset($errors['email']) ? 'invalid' : '' ?>"
                                             value="<?= e($defEmail) ?>" placeholder="e.g. ahmad@email.com" data-validate="email">
                                         <?php if (isset($errors['email'])): ?>
                                             <div class="form-feedback error">⚠ <?= e($errors['email']) ?></div>
@@ -347,7 +357,7 @@ $pay       = $old['payment'] ?? 'cash';
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label" for="phone">Phone Number <span class="req">*</span></label>
-                                        <input type="tel" id="phone" name="phone" class="form-control <?= isset($errors['phone']) ? 'invalid' : '' ?>"
+                                        <input type="tel" id="phone" <?= public_demo_mode() ? 'readonly' : '' ?> name="phone" class="form-control <?= isset($errors['phone']) ? 'invalid' : '' ?>"
                                             value="<?= e($defPhone) ?>" placeholder="e.g. 012-3456789" data-validate="phone">
                                         <?php if (isset($errors['phone'])): ?>
                                             <div class="form-feedback error">⚠ <?= e($errors['phone']) ?></div>
@@ -418,7 +428,7 @@ $pay       = $old['payment'] ?? 'cash';
                                     </legend>
                                     <div class="form-group">
                                         <label class="form-label" for="address">Full Delivery Address <span class="req">*</span></label>
-                                        <textarea id="address" name="address" class="form-control <?= isset($errors['address']) ? 'invalid' : '' ?>" rows="3"
+                                        <textarea id="address" <?= public_demo_mode() ? 'readonly' : '' ?> name="address" class="form-control <?= isset($errors['address']) ? 'invalid' : '' ?>" rows="3"
                                             placeholder="Unit / house no, street, area, postcode, city" style="resize:vertical;" data-validate="address"><?= e($old['address'] ?? '') ?></textarea>
                                         <?php if (isset($errors['address'])): ?>
                                             <div class="form-feedback error">⚠ <?= e($errors['address']) ?></div>
@@ -464,6 +474,7 @@ $pay       = $old['payment'] ?? 'cash';
                         <div class="card-header">
                             <h2>Order Summary</h2>
                             <p>Your cart items</p>
+                            <?php if (public_demo_mode()): ?><p>Demo limit: 10 different products, up to 3 of each.</p><?php endif; ?>
                         </div>
                         <div class="summary-items">
                             <?php foreach ($cartView['items'] as $item): ?>
@@ -528,7 +539,8 @@ $pay       = $old['payment'] ?? 'cash';
             <div class="choice-modal">
                 <button class="choice-close" id="guestModalClose" aria-label="Close">&times;</button>
                 <div class="guest-modal-icon" aria-hidden="true">🎉</div>
-                <h3 id="guest-confirm-title">Order Placed Successfully!</h3>
+                <h3 id="guest-confirm-title">Demo Order Saved</h3>
+                <p>No real payment or delivery takes place.</p>
                 <div class="order-ref" style="margin:0.5rem auto 1rem;"><?= $orderRef ?></div>
                 <?= $orderDetailsHtml ?>
                 <p style="margin-bottom:1.25rem;">Create an account to view and track your orders anytime.</p>

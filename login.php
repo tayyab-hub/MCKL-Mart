@@ -21,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require_valid_csrf();
     $email    = sanitizeInput($_POST['email'] ?? '');
     $password = input_string($_POST['password'] ?? '');
+    $demoLease = demo_guard($pdo, 'login', $email);
 
     // Validation: make sure the email looks valid and the password isn't empty.
     // NOTE: login does NOT enforce password strength — that only matters at registration.
@@ -44,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             session_regenerate_id(true);
             $_SESSION['user_id']   = (int) $user['user_id'];   // save the user's ID in the session = they are now logged in
             $_SESSION['user_name'] = $user['name'];            // save the name for greeting them later
+            $_SESSION['demo_account_email'] = is_demo_email(strtolower($email)) ? strtolower($email) : '';
 
             set_flash('Welcome back, ' . explode(' ', $user['name'])[0] . '!', 'success');  // one-time success message (uses first name)
 
@@ -89,12 +91,13 @@ require_once __DIR__ . '/includes/header.php';     // load the shared page top (
                         <!-- Login form: sends the email and password to this same page using POST -->
                         <form method="post" action="login.php" aria-label="Login form">
                             <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+                            <?php demo_honeypot(); ?>
                             <!-- Hidden field: remembers which page to return to after a successful login -->
                             <input type="hidden" name="redirect" value="<?= e($_POST['redirect'] ?? ($_GET['redirect'] ?? '')) ?>">
                             <div class="form-group">
                                 <label class="form-label" for="email">Email Address <span class="req">*</span></label>
                                 <input type="email" id="email" name="email" class="form-control <?= isset($errors['email']) ? 'invalid' : '' ?>"
-                                    value="<?= e($email) ?>" placeholder="you@email.com" autocomplete="email" data-validate="email">
+                                    value="<?= e($email) ?>" placeholder="Your saved demo email" autocomplete="email" data-validate="email">
                                 <?php if (isset($errors['email'])): ?>
                                     <div class="form-feedback error">⚠ <?= e($errors['email']) ?></div>
                                 <?php endif; ?>

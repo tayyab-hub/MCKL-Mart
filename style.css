@@ -2462,3 +2462,5 @@ select.form-control {
         padding: 0.5rem 0.7rem;
     }
 }
+/* Public demo privacy notice and spam trap; preserve the established layout. */
+.demo-notice { background: #fff7da; color: #24354b; font-size: .82rem; line-height: 1.6; padding: .7rem 0; }

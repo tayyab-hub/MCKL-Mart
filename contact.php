@@ -9,6 +9,7 @@ require_once __DIR__ . '/includes/functions.php'; // helper functions (escaping,
 
 $errors = [];   // collects validation error messages to show next to each field
 $old    = ['firstName' => '', 'lastName' => '', 'email' => '', 'phone' => '', 'subject' => '', 'message' => '']; // remembers typed values to re-fill the form
+if (public_demo_mode()) $old = array_replace($old, ['firstName'=>'Demo', 'lastName'=>'Visitor', 'email'=>demo_email(), 'message'=>demo_message()]);
 
 // Readable labels for the subject dropdown values.
 $subjectLabels = [
@@ -23,6 +24,8 @@ $subjectLabels = [
 // This block only runs when the contact form is submitted (an HTTP POST request).
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require_valid_csrf();
+    $demoLease = demo_guard($pdo, 'contact');
+    demo_prepare_post('contact');
     // Read each submitted field from $_POST; trim() removes extra spaces, ?? '' gives a default if missing.
     $firstName = sanitizeInput($_POST['cFirstName'] ?? '');
     $lastName  = sanitizeInput($_POST['cLastName'] ?? '');
@@ -122,7 +125,7 @@ require_once __DIR__ . '/includes/header.php';   // outputs the shared page top 
                     <div class="contact-info">
                         <h2>About this <span class="highlight">Demo</span></h2>
                         <p>MCKL Mart is an unofficial Web Computing coursework project. It is not a real store, does not operate physical branches, and does not offer customer support or deliveries.</p>
-                        <p>This form demonstrates server-side validation and database persistence. Please use fictional sample details only. Messages are stored in the local demo database and are not forwarded to anyone.</p>
+                        <p>This form demonstrates server-side validation and database persistence. Please use fictional sample details only. Messages are stored in the demo database and are not forwarded to anyone.</p>
                         <div style="background:var(--light);padding:1.2rem;border-radius:var(--radius-sm);margin-top:1rem;">
                             <strong>Privacy reminder:</strong> Do not enter a real address, telephone number or sensitive message when trying the demo.
                         </div>
@@ -130,13 +133,13 @@ require_once __DIR__ . '/includes/header.php';   // outputs the shared page top 
 
                     <div class="contact-form-card">
                         <div class="card-header">
-                            <h2>Send Us a Message</h2>
-                            <p>Academic demonstration — saved locally; no email will be sent</p>
+                            <h2>Try a Sample Message</h2>
+                            <p>Academic demonstration — saved in the demo database; no email will be sent</p>
                         </div>
 
                         <div class="contact-success <?= $justSent ? 'show' : '' ?>" id="contactSuccess" role="status" aria-live="polite">
                             <h3>Demo Message Saved!</h3>
-                            <p>This academic demo stores messages locally. No email is sent and no reply is provided.</p>
+                            <p>This academic demo stores sample messages. No email is sent and no reply is provided.</p>
                             <p style="margin-top:0.5rem;font-size:0.85rem;">Your message has been saved successfully.</p>
                             <a class="btn btn-primary" style="margin-top:1.5rem;" href="contact.php">Send Another Message</a>
                         </div>
@@ -148,11 +151,12 @@ require_once __DIR__ . '/includes/header.php';   // outputs the shared page top 
                             <!-- Contact form: collects the enquiry and submits it back to this page -->
                             <form id="contactForm" method="post" action="contact.php" aria-label="Contact support form">
                             <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+                            <?php demo_honeypot(); ?>
 
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label class="form-label" for="cFirstName">First Name <span class="req">*</span></label>
-                                        <input type="text" id="cFirstName" name="cFirstName" class="form-control <?= isset($errors['cFirstName']) ? 'invalid' : '' ?>"
+                                        <input type="text" id="cFirstName" <?= public_demo_mode() ? 'readonly' : '' ?> name="cFirstName" class="form-control <?= isset($errors['cFirstName']) ? 'invalid' : '' ?>"
                                             value="<?= e($old['firstName']) ?>" placeholder="Your first name" data-validate="name">
                                         <?php if (isset($errors['cFirstName'])): ?>
                                             <div class="form-feedback error">⚠ <?= e($errors['cFirstName']) ?></div>
@@ -160,7 +164,7 @@ require_once __DIR__ . '/includes/header.php';   // outputs the shared page top 
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label" for="cLastName">Last Name <span class="req">*</span></label>
-                                        <input type="text" id="cLastName" name="cLastName" class="form-control <?= isset($errors['cLastName']) ? 'invalid' : '' ?>"
+                                        <input type="text" id="cLastName" <?= public_demo_mode() ? 'readonly' : '' ?> name="cLastName" class="form-control <?= isset($errors['cLastName']) ? 'invalid' : '' ?>"
                                             value="<?= e($old['lastName']) ?>" placeholder="Your last name" data-validate="name">
                                         <?php if (isset($errors['cLastName'])): ?>
                                             <div class="form-feedback error">⚠ <?= e($errors['cLastName']) ?></div>
@@ -170,7 +174,7 @@ require_once __DIR__ . '/includes/header.php';   // outputs the shared page top 
 
                                 <div class="form-group">
                                     <label class="form-label" for="cEmail">Email Address <span class="req">*</span></label>
-                                    <input type="email" id="cEmail" name="cEmail" class="form-control <?= isset($errors['cEmail']) ? 'invalid' : '' ?>"
+                                    <input type="email" id="cEmail" <?= public_demo_mode() ? 'readonly' : '' ?> name="cEmail" class="form-control <?= isset($errors['cEmail']) ? 'invalid' : '' ?>"
                                         value="<?= e($old['email']) ?>" placeholder="your@email.com" data-validate="email">
                                     <?php if (isset($errors['cEmail'])): ?>
                                         <div class="form-feedback error">⚠ <?= e($errors['cEmail']) ?></div>
@@ -179,7 +183,7 @@ require_once __DIR__ . '/includes/header.php';   // outputs the shared page top 
 
                                 <div class="form-group">
                                     <label class="form-label" for="cPhone">Phone Number</label>
-                                    <input type="tel" id="cPhone" name="cPhone" class="form-control <?= isset($errors['cPhone']) ? 'invalid' : '' ?>"
+                                    <input type="tel" id="cPhone" <?= public_demo_mode() ? 'readonly' : '' ?> name="cPhone" class="form-control <?= isset($errors['cPhone']) ? 'invalid' : '' ?>"
                                         value="<?= e($old['phone']) ?>" placeholder="e.g. 012-3456789 (optional)" data-validate="phone" data-optional>
                                     <?php if (isset($errors['cPhone'])): ?>
                                         <div class="form-feedback error">⚠ <?= e($errors['cPhone']) ?></div>
@@ -200,8 +204,8 @@ require_once __DIR__ . '/includes/header.php';   // outputs the shared page top 
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="form-label" for="cMessage">Your Message <span class="req">*</span></label>
-                                    <textarea id="cMessage" name="cMessage" class="form-control <?= isset($errors['cMessage']) ? 'invalid' : '' ?>" rows="5"
+                                    <label class="form-label" for="cMessage">Sample Message <span class="req">*</span></label>
+                                    <textarea id="cMessage" <?= public_demo_mode() ? 'readonly' : '' ?> name="cMessage" class="form-control <?= isset($errors['cMessage']) ? 'invalid' : '' ?>" rows="5"
                                         placeholder="Type your message here..." style="resize:vertical;" data-validate="message"><?= e($old['message']) ?></textarea>
                                     <?php if (isset($errors['cMessage'])): ?>
                                         <div class="form-feedback error">⚠ <?= e($errors['cMessage']) ?></div>
@@ -213,7 +217,7 @@ require_once __DIR__ . '/includes/header.php';   // outputs the shared page top 
 
                                 <button type="submit" class="btn btn-primary"
                                     style="width:100%;padding:1rem;font-size:1rem;border-radius:var(--radius-sm);justify-content:center;">
-                                    Send Message
+                                    Save Demo Message
                                 </button>
                             </form>
                         </div>
